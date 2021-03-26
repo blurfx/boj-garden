@@ -1,17 +1,15 @@
 package main
 
 import (
-	"net/http"
-
-	"github.com/labstack/echo/v4"
+	"boj-garden/server"
+	"log"
 )
 
 func main() {
-	e := echo.New()
+	app := server.Init()
 
-	e.GET("/", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "ok")
-	})
-
-	e.Logger.Fatal(e.Start(":8000"))
+	err := app.Run(":8000")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
