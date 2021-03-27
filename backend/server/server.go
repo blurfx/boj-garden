@@ -1,16 +1,21 @@
 package server
 
 import (
+	"boj-garden/config"
+	"boj-garden/db"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 type Server struct {
-	Echo *echo.Echo
+	Echo	*echo.Echo
+	DB		*gorm.DB
 }
 
-func Init() *Server {
+func Init(cfg *config.Config) *Server {
 	return &Server {
-		Echo: echo.New(),
+		Echo:	echo.New(),
+		DB:		db.Init(cfg),
 	}
 }
 

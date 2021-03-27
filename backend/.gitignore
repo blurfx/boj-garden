@@ -97,3 +97,7 @@
 # .idea/misc.xml
 
 # *.ipr
+
+### ETC ###
+
+.env
