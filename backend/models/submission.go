@@ -5,12 +5,14 @@ import (
 	"time"
 )
 
-
 type Submission struct {
 	gorm.Model
 	ID			uint		`gorm:"primaryKey"`
-	UserID		uint		`gorm:"index"`
-	Result		string		`gorm:"index"`
+	ProblemID	uint		`gorm:"index;not null"`
+	UserID		uint		`gorm:"index;not null"`
+	Language	string		`gorm:"not null"`
+	Result		string		`gorm:"index;not null"`
+	Date		time.Time	`gorm:"not null"`
 	CreatedAt	time.Time
 	UpdatedAt	time.Time
 }

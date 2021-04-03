@@ -19,7 +19,7 @@ func Init(cfg *config.Config) *Server {
 	e.Validator = &requests.Validator{Validator: validator.New()}
 	return &Server {
 		Echo: e,
-		DB:		db.Init(cfg),
+		DB: db.Init(cfg),
 	}
 }
 

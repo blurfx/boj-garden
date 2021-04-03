@@ -13,11 +13,10 @@ func main() {
 	app := server.Init(cfg)
 
 	routes.InitRouter(app)
-
 	utils.MigrateDatabase(app.DB)
-	err := app.Run(":8000")
 
-	if err != nil {
+
+	if err := app.Run(":8000"); err != nil {
 		log.Fatal(err)
 	}
 }

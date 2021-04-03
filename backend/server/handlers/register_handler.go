@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"boj-garden/models"
 	"boj-garden/requests"
 	"boj-garden/server"
+	"boj-garden/utils"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -26,7 +28,12 @@ func (registerHandler *RegisterHandler) Register(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	// TODO: request crawl
+	username := registerRequest.Username
+	user := &models.User{}
+	registerHandler.server.DB.FirstOrCreate(&user, &models.User{Username: username})
+
+	crawler := utils.GetCrawlerInstance()
+	crawler.Crawl(registerHandler.server.DB, user)
 
 	return c.JSON(http.StatusOK, registerRequest)
 }

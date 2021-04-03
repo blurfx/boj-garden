@@ -7,7 +7,8 @@ import (
 
 type User struct {
 	gorm.Model
-	Username	string		`gorm:"primaryKey"`
+	ID			uint			`gorm:"primaryKey"`
+	Username	string			`gorm:"unique"`
 	CreatedAt	time.Time
 	UpdatedAt	time.Time
 	Submission	[]Submission
