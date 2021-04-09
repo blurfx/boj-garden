@@ -8,8 +8,10 @@ import (
 
 func InitRouter(server *server.Server) {
 	registerHandler := handlers.MakeRegisterHandler(server)
+	chartHandler := handlers.MakeChartHandler(server)
 
 	server.Echo.Use(middleware.Logger())
 
 	server.Echo.POST("/register", registerHandler.Register)
+	server.Echo.GET("/garden/:username", chartHandler.GetChart)
 }
