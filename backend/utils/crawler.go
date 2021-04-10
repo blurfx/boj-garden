@@ -103,4 +103,6 @@ func (c *Crawler) Crawl(db *gorm.DB, user *models.User) {
 	c.Crawler.OnError(func(response *colly.Response, err error) {
 		fmt.Println(err)
 	})
+
+	c.Crawler.Wait()
 }

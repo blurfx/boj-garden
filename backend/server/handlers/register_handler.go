@@ -32,8 +32,11 @@ func (registerHandler *RegisterHandler) Register(c echo.Context) error {
 	user := &models.User{}
 	registerHandler.server.DB.FirstOrCreate(&user, &models.User{Username: username})
 
-	crawler := utils.GetCrawlerInstance()
-	crawler.Crawl(registerHandler.server.DB, user)
+	crawlTask := &utils.CrawlTask{
+		DB: registerHandler.server.DB,
+		User: user,
+	}
+	utils.EnqueueCrawlTask(crawlTask)
 
 	return c.JSON(http.StatusOK, registerRequest)
 }
