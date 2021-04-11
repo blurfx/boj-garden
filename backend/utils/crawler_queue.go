@@ -1,23 +1,22 @@
 package utils
 
 import (
-	"boj-garden/models"
 	"gorm.io/gorm"
 	"sync"
 )
 
 type CrawlTask struct {
-	DB	  *gorm.DB
-	User  *models.User
+	DB       *gorm.DB
+	Username string
 }
 
 var (
 	wg      sync.WaitGroup
-	channel = make(chan *CrawlTask, 500)
+	channel = make(chan CrawlTask, 500)
 	once    sync.Once
 )
 
-func EnqueueCrawlTask(crawlTask *CrawlTask) bool {
+func EnqueueCrawlTask(crawlTask CrawlTask) bool {
 	once.Do(func() {
 		wg.Add(1)
 		go worker(&wg)
@@ -34,8 +33,8 @@ func EnqueueCrawlTask(crawlTask *CrawlTask) bool {
 func worker(wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	for job := range channel {
+	for task := range channel {
 		crawler := GetCrawlerInstance()
-		crawler.Crawl(job.DB, job.User)
+		crawler.Crawl(task.DB, task.Username)
 	}
 }

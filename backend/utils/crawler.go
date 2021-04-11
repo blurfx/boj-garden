@@ -30,10 +30,15 @@ func GetCrawlerInstance() *Crawler {
 	return crawler
 }
 
-func (c *Crawler) Crawl(db *gorm.DB, user *models.User) {
+func (c *Crawler) Crawl(db *gorm.DB, username string) {
 
-	var lastSubmission *models.Submission
-	var firstSubmission *models.Submission
+	var (
+		lastSubmission  *models.Submission
+		firstSubmission *models.Submission
+		user            *models.User
+	)
+
+	db.FirstOrCreate(&user, &models.User{Username: username})
 
 	if err := db.Where("user_id = ?", user.ID).First(&firstSubmission).Error; err != nil {
 		firstSubmission.ID = math.MaxInt32

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"boj-garden/models"
 	"boj-garden/requests"
 	"boj-garden/server"
 	"boj-garden/utils"
@@ -28,14 +27,11 @@ func (registerHandler *RegisterHandler) Register(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	username := registerRequest.Username
-	user := &models.User{}
-	registerHandler.server.DB.FirstOrCreate(&user, &models.User{Username: username})
-
-	crawlTask := &utils.CrawlTask{
+	crawlTask := utils.CrawlTask{
 		DB: registerHandler.server.DB,
-		User: user,
+		Username: registerRequest.Username,
 	}
+
 	utils.EnqueueCrawlTask(crawlTask)
 
 	return c.JSON(http.StatusOK, registerRequest)
