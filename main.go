@@ -14,7 +14,7 @@ func main() {
 
 	routes.InitRouter(app)
 	utils.MigrateDatabase(app.DB)
-
+	utils.RunCrontab(app.DB)
 
 	if err := app.Run(":8000"); err != nil {
 		log.Fatal(err)

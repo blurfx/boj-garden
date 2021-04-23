@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 	"math"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -14,7 +15,19 @@ type Crawler struct {
 	Crawler *colly.Collector
 }
 
-func GetCrawlerInstance() *Crawler {
+
+type CrawlTask struct {
+	DB       *gorm.DB
+	Username string
+}
+
+var (
+	wg      sync.WaitGroup
+	channel = make(chan CrawlTask, 500)
+	once    sync.Once
+)
+
+func getInstance() *Crawler {
 
 	crawler := &Crawler{
 		Crawler: colly.NewCollector(
@@ -30,7 +43,7 @@ func GetCrawlerInstance() *Crawler {
 	return crawler
 }
 
-func (c *Crawler) Crawl(db *gorm.DB, username string) {
+func (c *Crawler) crawl(db *gorm.DB, username string) {
 
 	var (
 		lastSubmission  *models.Submission
@@ -110,4 +123,27 @@ func (c *Crawler) Crawl(db *gorm.DB, username string) {
 	})
 
 	c.Crawler.Wait()
+}
+
+func EnqueueCrawlTask(crawlTask CrawlTask) bool {
+	once.Do(func() {
+		wg.Add(1)
+		go worker(&wg)
+	})
+
+	select {
+	case channel <- crawlTask:
+		return true
+	default:
+		return false
+	}
+}
+
+func worker(wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	for task := range channel {
+		crawler := getInstance()
+		crawler.crawl(task.DB, task.Username)
+	}
 }
